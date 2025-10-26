@@ -1,10 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import validates
 from sqlalchemy import CheckConstraint
+from sqlalchemy.ext.associationproxy import association_proxy
 
 db = SQLAlchemy()
-
-# Define Models here
 
 class Exercise(db.Model):
     __tablename__ = 'exercises'
@@ -23,7 +22,10 @@ class Exercise(db.Model):
     workout_exercises = db.relationship('WorkoutExercise', back_populates='exercise', cascade='all, delete-orphan')
     
     # Relationship to Workout through WorkoutExercise
-    workouts = db.relationship('Workout', secondary='workout_exercises', back_populates='exercises')
+    workouts = db.relationship('Workout', secondary='workout_exercises', back_populates='exercises', overlaps="workout_exercises")
+    
+    # Association proxy - easy access to workout objects through workout_exercises
+    workout_list = association_proxy('workout_exercises', 'workout')
     
     # Model Validation 1: Validate name is not empty
     @validates('name')
@@ -60,7 +62,10 @@ class Workout(db.Model):
     workout_exercises = db.relationship('WorkoutExercise', back_populates='workout', cascade='all, delete-orphan')
     
     # Relationship to Exercise through WorkoutExercise
-    exercises = db.relationship('Exercise', secondary='workout_exercises', back_populates='workouts')
+    exercises = db.relationship('Exercise', secondary='workout_exercises', back_populates='workouts', overlaps="workout_exercises")
+    
+    # Association proxy - easy access to exercise objects through workout_exercises
+    exercise_list = association_proxy('workout_exercises', 'exercise')
     
     # Model Validation 2: Validate duration is positive
     @validates('duration_minutes')
@@ -84,8 +89,8 @@ class WorkoutExercise(db.Model):
     duration_seconds = db.Column(db.Integer)
     
     # Relationships
-    workout = db.relationship('Workout', back_populates='workout_exercises')
-    exercise = db.relationship('Exercise', back_populates='workout_exercises')
+    workout = db.relationship('Workout', back_populates='workout_exercises', overlaps="exercises,workouts")
+    exercise = db.relationship('Exercise', back_populates='workout_exercises', overlaps="exercises,workouts")
     
     def __repr__(self):
         return f'<WorkoutExercise {self.id}: Workout {self.workout_id}, Exercise {self.exercise_id}>'
