@@ -34,10 +34,10 @@ def get_workout_by_id(id):
     if not workout:
         return jsonify({"error": "Workout not found"}), 404
     
-    # Serialize workout with nested exercises and workout_exercises (stretch goal)
+    # Serialize workout with nested exercises and workout_exercises
     result = workout_schema.dump(workout)
     
-    # Include workout_exercises details for stretch goal
+    # Include workout_exercises details
     result['workout_exercises'] = [
         {
             'id': we.id,
@@ -86,7 +86,7 @@ def delete_workout(id):
     if not workout:
         return jsonify({"error": "Workout not found"}), 404
     
-    # Cascade delete will automatically delete associated WorkoutExercises (stretch goal)
+    # Cascade delete will automatically delete associated WorkoutExercises
     db.session.delete(workout)
     db.session.commit()
     
@@ -153,7 +153,7 @@ def delete_exercise(id):
     if not exercise:
         return jsonify({"error": "Exercise not found"}), 404
     
-    # Cascade delete will automatically delete associated WorkoutExercises (stretch goal)
+    # Cascade delete will automatically delete associated WorkoutExercises
     db.session.delete(exercise)
     db.session.commit()
     

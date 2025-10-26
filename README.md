@@ -1,6 +1,6 @@
 # The VERY BEST Flask SQLAlchemy Workout Application Backend
 
-## Project Description
+## Project Description (So important)
 
 A SUPER DUPER AND VERY FUCKING AWESOME robust REST API backend for a workout tracking application built with Flask, SQLAlchemy, and Marshmallow. This API enables personal trainers to manage workouts and exercises, track workout sessions, and associate exercises with workouts including detailed information like sets, reps, and duration.
 

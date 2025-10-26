@@ -16,7 +16,6 @@ def client():
             yield client
             db.drop_all()
 
-
 @pytest.fixture
 def sample_data():
     """Create sample data for tests"""
@@ -36,7 +35,6 @@ def sample_data():
     
     return {'exercise': exercise, 'workout': workout}
 
-
 # MODEL VALIDATION TESTS
 
 def test_exercise_name_validation(client):
@@ -47,7 +45,6 @@ def test_exercise_name_validation(client):
             db.session.add(exercise)
             db.session.commit()
 
-
 def test_workout_duration_validation(client):
     """Test that workout duration must be positive"""
     with app.app_context():
@@ -55,7 +52,6 @@ def test_workout_duration_validation(client):
             workout = Workout(date=date.today(), duration_minutes=0, notes="test")
             db.session.add(workout)
             db.session.commit()
-
 
 def test_exercise_category_validation(client):
     """Test that exercise category cannot be empty"""
@@ -65,7 +61,6 @@ def test_exercise_category_validation(client):
             db.session.add(exercise)
             db.session.commit()
 
-
 # ENDPOINT STATUS CODE TESTS
 
 def test_get_workouts_success(client, sample_data):
@@ -73,24 +68,20 @@ def test_get_workouts_success(client, sample_data):
     response = client.get('/workouts')
     assert response.status_code == 200
 
-
 def test_get_exercises_success(client, sample_data):
     """Test GET /exercises returns 200"""
     response = client.get('/exercises')
     assert response.status_code == 200
-
 
 def test_get_workout_by_id_success(client, sample_data):
     """Test GET /workouts/<id> returns 200 for existing workout"""
     response = client.get('/workouts/1')
     assert response.status_code == 200
 
-
 def test_get_workout_by_id_not_found(client):
     """Test GET /workouts/<id> returns 404 for non-existent workout"""
     response = client.get('/workouts/999')
     assert response.status_code == 404
-
 
 def test_post_workout_success(client):
     """Test POST /workouts returns 201 with valid data"""
@@ -101,7 +92,6 @@ def test_post_workout_success(client):
     })
     assert response.status_code == 201
 
-
 def test_post_workout_invalid_data(client):
     """Test POST /workouts returns 400 with invalid data"""
     response = client.post('/workouts', json={
@@ -109,7 +99,6 @@ def test_post_workout_invalid_data(client):
         'duration_minutes': -5  # Invalid: negative duration
     })
     assert response.status_code == 400
-
 
 def test_post_exercise_success(client):
     """Test POST /exercises returns 201 with valid data"""
@@ -120,16 +109,14 @@ def test_post_exercise_success(client):
     })
     assert response.status_code == 201
 
-
 def test_post_exercise_invalid_data(client):
     """Test POST /exercises returns 400 with invalid data"""
     response = client.post('/exercises', json={
-        'name': 'ab',  # Invalid: too short
+        'name': 'ab',
         'category': 'strength',
         'equipment_needed': False
     })
     assert response.status_code == 400
-
 
 def test_delete_workout_success(client, sample_data):
     """Test DELETE /workouts/<id> returns 200"""
@@ -142,12 +129,10 @@ def test_delete_workout_not_found(client):
     response = client.delete('/workouts/999')
     assert response.status_code == 404
 
-
 def test_delete_exercise_success(client, sample_data):
     """Test DELETE /exercises/<id> returns 200"""
     response = client.delete('/exercises/1')
     assert response.status_code == 200
-
 
 def test_post_workout_exercise_success(client, sample_data):
     """Test POST /workouts/<id>/exercises/<id>/workout_exercises returns 201"""
@@ -156,7 +141,6 @@ def test_post_workout_exercise_success(client, sample_data):
         'reps': 12
     })
     assert response.status_code == 201
-
 
 def test_post_workout_exercise_not_found(client):
     """Test POST returns 404 when workout or exercise doesn't exist"""

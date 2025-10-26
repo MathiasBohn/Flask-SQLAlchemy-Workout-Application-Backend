@@ -8,13 +8,13 @@ db = SQLAlchemy()
 class Exercise(db.Model):
     __tablename__ = 'exercises'
     
-    # Table Constraint 3: Check constraint on name length
+    # Table Constraint 1: Check constraint on name length
     __table_args__ = (
         CheckConstraint('length(name) >= 3', name='check_exercise_name_length'),
     )
     
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False, unique=True)  # Table Constraints 1 & 2: nullable=False & unique=True
+    name = db.Column(db.String, nullable=False, unique=True)  # Table Constraints 2 & 3: nullable=False & unique=True
     category = db.Column(db.String, nullable=False)
     equipment_needed = db.Column(db.Boolean, nullable=False)
     
@@ -24,7 +24,7 @@ class Exercise(db.Model):
     # Relationship to Workout through WorkoutExercise
     workouts = db.relationship('Workout', secondary='workout_exercises', back_populates='exercises', overlaps="workout_exercises")
     
-    # Association proxy - easy access to workout objects through workout_exercises
+    # Association proxy
     workout_list = association_proxy('workout_exercises', 'workout')
     
     # Model Validation 1: Validate name is not empty
@@ -34,7 +34,7 @@ class Exercise(db.Model):
             raise ValueError("Exercise name cannot be empty")
         return name.strip()
     
-    # Model Validation 3: Validate category is not empty
+    # Model Validation 2: Validate category is not empty
     @validates('category')
     def validate_category(self, key, category):
         if not category or not category.strip():
@@ -64,10 +64,10 @@ class Workout(db.Model):
     # Relationship to Exercise through WorkoutExercise
     exercises = db.relationship('Exercise', secondary='workout_exercises', back_populates='workouts', overlaps="workout_exercises")
     
-    # Association proxy - easy access to exercise objects through workout_exercises
+    # Association proxy
     exercise_list = association_proxy('workout_exercises', 'exercise')
     
-    # Model Validation 2: Validate duration is positive
+    # Model Validation 3: Validate duration is positive
     @validates('duration_minutes')
     def validate_duration(self, key, duration_minutes):
         if duration_minutes <= 0:
